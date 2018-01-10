@@ -33,8 +33,12 @@ module.exports = class DockerContainer extends BaseContainer {
         this._AssertCapabilityExists(Capabilities.DOCKERMACHINEPATH)
       }
       if (this.caps[Capabilities.FACEBOOK_API]) {
-        this._AssertCapabilityExists(Capabilities.FACEBOOK_WEBHOOK_PORT)
-        this._AssertCapabilityExists(Capabilities.FACEBOOK_WEBHOOK_PATH)
+        try {
+          this._AssertCapabilityExists(Capabilities.FACEBOOK_WEBHOOK_URL)
+        } catch (e) {
+          this._AssertCapabilityExists(Capabilities.FACEBOOK_WEBHOOK_PORT)
+          this._AssertCapabilityExists(Capabilities.FACEBOOK_WEBHOOK_PATH)
+        }
         this._AssertOneCapabilityExists(Capabilities.FACEBOOK_PUBLISHPORT, Capabilities.FACEBOOK_PUBLISHPORT_RANGE)
       }
 
