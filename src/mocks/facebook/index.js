@@ -7,6 +7,13 @@ const fs = require('fs')
 const path = require('path')
 const url = require('url')
 const tcpPortUsed = require('tcp-port-used')
+const token = process.env.BOTIUM_FACEBOOK_TOKEN
+let crypto
+try {
+  crypto = require('crypto')
+} catch (err) {
+  console.log('crypto support is disabled, Facebook token not available')
+}
 
 var publishPort = process.env.BOTIUM_FACEBOOK_PUBLISHPORT
 if (publishPort) {
@@ -262,6 +269,9 @@ function callWebhook (msg) {
     uri: webhookurl,
     method: 'POST',
     json: msg
+  }
+  if (token) {
+      options.headers = {'X-Hub-Signature': 'sha1=' + crypto.createHmac('sha1', token).update(JSON.stringify(msg)).digest('hex')}
   }
   request(options, function (err, response, body) {
     if (err) {
