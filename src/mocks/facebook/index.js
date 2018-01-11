@@ -136,13 +136,27 @@ var httpsOptions = {
   cert: fs.readFileSync(path.resolve(__dirname, '127.0.0.1.cert'))
 }
 
-https.createServer(httpsOptions, appMock).listen(443, '0.0.0.0', function (err) {
-  if (err) {
-    console.log('error listening 443: ' + err)
-  } else {
-    console.log('Mock server listening on port 443')
-  }
-})
+switch (process.env.BOTIUM_FACEBOOK_MOCK_PROTOCOL) {
+  case 'http':
+    http.createServer(appMock).listen(80, '0.0.0.0', function (err) {
+      if (err) {
+        console.log('error listening 80: ' + err)
+      } else {
+        console.log('Mock server listening on port 80')
+      }
+    })
+    break
+
+  case 'https':
+  default:
+    https.createServer(httpsOptions, appMock).listen(443, '0.0.0.0', function (err) {
+      if (err) {
+        console.log('error listening 443: ' + err)
+      } else {
+        console.log('Mock server listening on port 443')
+      }
+    })
+}
 
 var appTest = express()
 appTest.use(bodyParser.json())
