@@ -149,6 +149,7 @@ module.exports = class BaseContainer {
   }
 
   _QueueBotSays (botMsg) {
+    if (this.caps[Capabilities.IGNORE_ACTIONS] && ['typing_on', 'typing_off', 'mark_seen'].indexOf(botMsg.sourceAction) > -1) return
     if (!botMsg.channel) botMsg.channel = 'default'
 
     if (!this.queues[botMsg.channel]) {
