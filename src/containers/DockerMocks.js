@@ -29,6 +29,7 @@ class BaseMock {
   SelectPublishPort (caps) {
     if (caps[this.capNamePublishPort]) {
       this.publishPort = caps[this.capNamePublishPort]
+      this.socketTransports = caps[Capabilities.SOCKET_TRANSPORTS]
       return Promise.resolve()
     } else {
       return new Promise((resolve, reject) => {
@@ -101,7 +102,8 @@ class BaseMock {
             this.socket = null
           }
 
-          this.socket = io.connect(this.mockUrl)
+          const socketOptions = Array.isArray(this.socketTransports) ? {transports: this.socketTransports} : {}
+          this.socket = io.connect(this.mockUrl, socketOptions)
           this.socket.on(BotiumMockCommand.MOCKCMD_RECEIVEDFROMBOT, (botMsg) => {
             this.debug(`Mock - socket received from bot ${util.inspect(botMsg)}`)
             container._QueueBotSays(new BotiumMockMessage(botMsg))
